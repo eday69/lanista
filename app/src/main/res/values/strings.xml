@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">lanista</string>
+    <string name="you_have_landed" />
 </resources>
