@@ -19,7 +19,7 @@ public class LoginPage extends AppCompatActivity {
     /** Called when the user taps the Send button */
     public void doLogin(View view) {
         // Do something in response to button
-        Intent intent = new Intent(this, loginPwd.class);
+        Intent intent = new Intent(this, credentials.class);
         EditText editText = (EditText) findViewById(R.id.editText);
         String message = editText.getText().toString();
         intent.putExtra(EXTRA_MESSAGE, message);

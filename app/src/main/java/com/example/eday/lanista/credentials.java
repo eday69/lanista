@@ -8,30 +8,25 @@ import android.widget.EditText;
 
 import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
-public class loginPwd extends AppCompatActivity {
+public class credentials extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login_pwd);
+        setContentView(R.layout.activity_credentials);
     }
 
     /** Called when the user taps the Send button */
     public void dolandingPage(View view) {
         // Do something in response to button
         Intent intent = new Intent(this, landingPage.class);
-        EditText editText = (EditText) findViewById(R.id.editText);
-        String message = editText.getText().toString();
-        intent.putExtra(EXTRA_MESSAGE, message);
         startActivity(intent);
     }
 
     public void doresetPwd(View view) {
         // Do something in response to button
         Intent intent = new Intent(this, resetPwd.class);
-        EditText editText = (EditText) findViewById(R.id.editText);
-        String message = editText.getText().toString();
-        intent.putExtra(EXTRA_MESSAGE, message);
         startActivity(intent);
     }
+
 }
