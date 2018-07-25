@@ -1,4 +1,24 @@
 <resources>
     <string name="app_name">lanista</string>
+
     <string name="you_have_landed" />
+    <string name="facebook_app_id">659337571094510</string>
+    <string name="fb_login_protocol_scheme">fb659337571094510</string>
+
+    <string name="welcome">Welcome !</string>
+    <string name="cancel_login">Login canceled</string>
+    <string name="error_login">Error during login process</string>
+    <string name="logout">Session logged out</string>
+    <string name="server_client_id">409648479345-oo0jn022pc5g7s15mj8fq7i4jn47ssl1.apps.googleusercontent.com</string>
+
+    <string name="signed_in_fmt">Signed in as: %s</string>
+    <string name="signed_in">Signed in</string>
+    <string name="signing_in">Signing in…</string>
+    <string name="signed_out">Signed out</string>
+
+    <!-- Button labels -->
+    <string name="sign_out">Sign Out</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="refresh_token">Get Fresh Token</string>
+
 </resources>
