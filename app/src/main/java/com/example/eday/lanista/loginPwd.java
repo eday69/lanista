@@ -6,12 +6,18 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
+import com.twitter.sdk.android.core.Twitter;
+
 import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
 public class loginPwd extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        //initialize Twitter Kit
+        Twitter.initialize(this);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_pwd);
     }
