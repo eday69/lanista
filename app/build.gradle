@@ -1,6 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'MyAndroidKey'
+            keyPassword '@pompita1'
+            storeFile file('/Users/icarovazquez/keystores/android.jks')
+            storePassword 'pompita1'
+        }
+    }
     compileSdkVersion 26
     defaultConfig {
         applicationId "com.example.eday.lanista"
@@ -14,12 +22,12 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
         }
     }
 }
 
 dependencies {
-
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
@@ -27,13 +35,10 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation files('build/libs/login-with-amazon-sdk.jar')
-
     // Include all the Twitter APIs
     implementation 'com.twitter.sdk.android:twitter:3.1.1'
     // Monetize using mopub
     implementation 'com.twitter.sdk.android:twitter-mopub:3.1.1'
-
-
 }
 
 repositories {

@@ -15,9 +15,6 @@ public class loginPwd extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        //initialize Twitter Kit
-        Twitter.initialize(this);
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_pwd);
     }

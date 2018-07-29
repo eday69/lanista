@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.eday.lanista">
+        package="com.example.eday.lanista">
 
     <application
         android:allowBackup="true"
@@ -17,8 +17,21 @@
             </intent-filter>
         </activity>
         <activity android:name=".loginPwd" />
-        <activity android:name=".register" />
+        <activity android:name=".register"
+                  android:configChanges="keyboard|keyboardHidden|orientation|screenSize"/>
         <activity android:name=".landingPage" />
+
+        <activity android:name="com.amazon.identity.auth.device.workflow.WorkflowActivity"
+                  android:theme="@android:style/Theme.NoDisplay"
+                  android:allowTaskReparenting="true" android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:host="com.example.eday.lanista" android:scheme="amzn"/>
+            </intent-filter>
+        </activity>
+
         <activity android:name=".resetPwd"></activity>
     </application>
 
