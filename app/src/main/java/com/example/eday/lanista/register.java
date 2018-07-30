@@ -2,183 +2,224 @@ package com.example.eday.lanista;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.Button;
 
+import com.bumptech.glide.Glide;
 import com.facebook.CallbackManager;
-
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.SignInButton;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.Task;
 import com.google.android.gms.auth.api.Auth;
-
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.OptionalPendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 
-public class register extends AppCompatActivity implements View.OnClickListener {
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 
-    private static final String TAG = "SignInActivity";
-    private static int RC_SIGN_IN = 100;
+//import static android.provider.ContactsContract.Intents.Insert.EMAIL;
 
-    private GoogleSignInClient mGoogleSignInClient;
+public class register extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener{
+    public static final String GoogleId = "com.example.myfirstapp.GoogleId";
+    private static final String TAG = register.class.getSimpleName();
+    private static final int RC_SIGN_IN = 430;
     private GoogleApiClient mGoogleApiClient;
-    private TextView mStatusTextView;
-
-    private LoginButton loginButton;
-    private CallbackManager callbackManager;
-
+    private SignInButton btnSignIn;
+    public LoginButton loginButton;
+    public Button fb, google;
+    public CallbackManager callbackManager;
+    public String id, name, email, gender, birthday;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        callbackManager = CallbackManager.Factory.create();
+//        fb = (Button) findViewById(R.id.fb);
+        google = (Button) findViewById(R.id.google);
+        loginButton = (LoginButton) findViewById(R.id.login_button);
+        List < String > permissionNeeds = Arrays.asList("user_photos", "email",
+                "user_birthday", "public_profile", "AccessToken");
+        loginButton.registerCallback(callbackManager, new FacebookCallback < LoginResult > () {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                String accessToken = loginResult.getAccessToken().getToken();
+                Log.i("accessToken", accessToken);
+                GraphRequest request = GraphRequest.newMeRequest(
+                        loginResult.getAccessToken(),
+                        new GraphRequest.GraphJSONObjectCallback() {@Override
+                        public void onCompleted(JSONObject object, GraphResponse response) {
+                            Log.i("LoginActivity", response.toString());
+                            try {
+                                id = object.getString("id");
+                                try {
+                                    URL profile_pic = new URL(
+                                            "http://graph.facebook.com/" + id + "/picture?type=large");
+                                    Log.i("profile_pic",profile_pic + "");
 
-        // Google Sign in process
+                                } catch (MalformedURLException e) {
+                                    e.printStackTrace();
+                                }
+                                Log.e("UserDate", String.valueOf(object));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        });
+                Bundle parameters = new Bundle();
+                parameters.putString("fields","id,name,email,gender, birthday");
+                request.setParameters(parameters);
+                request.executeAsync();
+            }
+            @Override
+            public void onCancel() {
+                System.out.println("onCancel");
+            }
+            @Override
+            public void onError(FacebookException exception) {
+                System.out.println("onError");
+                Log.v("LoginActivity", exception.getCause().toString());
+            }
+        });
+        initializeControls();
+        initializeGPlusSettings();
+    }
 
-        // Configure sign-in to request the user's ID, email address, and basic
-        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
+    private void initializeControls(){
+        btnSignIn = (SignInButton) findViewById(R.id.btn_sign_in);
+        btnSignIn.setOnClickListener(this);
+    }
+
+    private void initializeGPlusSettings(){
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
-        // Build a GoogleSignInClient with the options specified by gso.
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+        btnSignIn.setSize(SignInButton.SIZE_STANDARD);
+        btnSignIn.setScopes(gso.getScopeArray());
+    }
 
-        // Views
-        mStatusTextView = findViewById(R.id.status);
+    private void signIn() {
+        Log.d(TAG, "Google Log in. In signIn()");
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
 
-        // Button listeners
-        findViewById(R.id.sign_in_button).setOnClickListener(this);
-        findViewById(R.id.sign_out_button).setOnClickListener(this);
-        findViewById(R.id.disconnect_button).setOnClickListener(this);
-
-// Set the dimensions of the sign-in button.
-        SignInButton signInButton = findViewById(R.id.sign_in_button);
-        signInButton.setSize(SignInButton.SIZE_STANDARD);
-        findViewById(R.id.sign_in_button).setOnClickListener(this);
-
-        // Facebook login process
-        loginButton = (LoginButton) findViewById(R.id.loginButton);
-        callbackManager = CallbackManager.Factory.create();
-
-        loginButton.setReadPermissions("email");
-
-        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+    private void signOut() {
+        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                new ResultCallback<Status>() {
                     @Override
-                    public void onSuccess(LoginResult loginResult) {
-                        goMainScreen();
+                    public void onResult(Status status) {
+                        updateUI(false, null);
                     }
-
-                    @Override
-                    public void onCancel() {
-                        Toast.makeText(getApplicationContext(), R.string.cancel_login, Toast.LENGTH_SHORT).show();                        // App code
-                    }
-
-                    @Override
-                    public void onError(FacebookException exception) {
-                        Toast.makeText(getApplicationContext(), R.string.error_login, Toast.LENGTH_SHORT).show();
-                    }
-
                 });
     }
 
+
+    private void handleGPlusSignInResult(GoogleSignInResult result) {
+        Log.d(TAG, "handleSignInResult:" + result.isSuccess());
+        if (result.isSuccess()) {
+            GoogleSignInAccount acct = result.getSignInAccount();
+            //Fetch values
+            String personId = acct.getId();
+            String personName = acct.getDisplayName();
+            String personPhotoUrl = acct.getPhotoUrl().toString();
+            String email = acct.getEmail();
+            String familyName = acct.getFamilyName();
+            Log.e(TAG, "Id: "+personId+" Name: " + personName +", email: " + email + ", Image: " + personPhotoUrl +", Family Name: " + familyName);
+            // we have correct Google+ credential. Save to DB? Change to landingPage.
+            updateUI(true, acct);
+        } else {
+            updateUI(false, null);
+        }
+    }
     @Override
     public void onStart() {
         super.onStart();
 
-        // [START on_start_sign_in]
-        // Check for existing Google Sign In account, if the user is already signed in
-        // the GoogleSignInAccount will be non-null.
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        updateUI(account);
-        // [END on_start_sign_in]
-    }
-
-    private void updateUI(@Nullable GoogleSignInAccount account) {
-        if (account != null) {
-            mStatusTextView.setText(getString(R.string.signed_in_fmt, account.getDisplayName()));
-
-            findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
+        OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
+        if (opr.isDone()) {
+            Log.d(TAG, "Got cached sign-in");
+            GoogleSignInResult result = opr.get();
+            handleGPlusSignInResult(result);
         } else {
-            mStatusTextView.setText(R.string.signed_out);
-
-            findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
-            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.GONE);
+            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
+                @Override
+                public void onResult(GoogleSignInResult googleSignInResult) {
+                    handleGPlusSignInResult(googleSignInResult);
+                }
+            });
         }
     }
-
-    private void goMainScreen() {
-        Intent intent = new Intent(this, landingPage.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-    }
-
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        callbackManager.onActivityResult(requestCode, resultCode, data);
-        super.onActivityResult(requestCode, resultCode, data);
-
-        // Google sign in
-        // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        // An unresolvable error has occurred and Google APIs (including Sign-In) will not
+        // be available.
+        Log.d(TAG, "onConnectionFailed:" + connectionResult);
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int responseCode,
+                                    Intent data) {
         if (requestCode == RC_SIGN_IN) {
-            // The Task returned from this call is always completed, no need to attach
-            // a listener.
-            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            handleSignInResult(task);
-        }
-
-    }
-
-    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
-        try {
-            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-
-            // Signed in successfully, show authenticated UI.
-            updateUI(account);
-        } catch (ApiException e) {
-            // The ApiException status code indicates the detailed failure reason.
-            // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
-            updateUI(null);
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            handleGPlusSignInResult(result);
+        }else{
+            super.onActivityResult(requestCode, responseCode, data);
+            callbackManager.onActivityResult(requestCode, responseCode, data);
         }
     }
-
-    // Again, Google sign in
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.sign_in_button:
-                signIn();
-                break;
-            // ...
+//        if (v == fb) {
+        if (v == loginButton) {
+            Log.d(TAG, "Clicked facebook sign in");
+            loginButton.performClick();
+        }else if(v == btnSignIn){  //v == google
+            Log.d(TAG, "Clicked google sign in");
+            signIn();
+        }
+    }
+    private void updateUI(boolean isSignedIn, GoogleSignInAccount googleAcct) {
+        if (isSignedIn) {
+//            btnSignIn.setVisibility(View.VISIBLE); // was GONE
+
+            // We have Google credentials, Go to Landing Page !
+            Intent intent = new Intent(this, landingPage.class);
+
+            Bundle b = new Bundle();
+
+            b.putString("id", googleAcct.getId());
+            b.putString("name", googleAcct.getDisplayName());
+            b.putString("photoUrl", googleAcct.getPhotoUrl().toString());
+            b.putString("email", googleAcct.getEmail());
+            b.putString("famName", googleAcct.getFamilyName());
+
+            intent.putExtra("GoogleAcct", b);
+            startActivity(intent);
+
+
+        } else {
+            btnSignIn.setVisibility(View.VISIBLE);
         }
     }
 
-    // Again, Google sign in
-    private void signIn() {
-        Intent intent = new Intent(this, landingPage.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-
-//        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-//        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-//        startActivityForResult(signInIntent, RC_SIGN_IN);
-    }
-
-    @Override
-    public void onPointerCaptureChanged(boolean hasCapture) {
-
-    }
 }

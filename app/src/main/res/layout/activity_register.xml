@@ -9,14 +9,14 @@
 
     <ImageView
         android:id="@+id/imageView5"
-        android:layout_width="213dp"
+        android:layout_width="184dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="30dp"
-        android:layout_marginTop="31dp"
-        app:layout_constraintBottom_toTopOf="@+id/sign_in_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/textView19"
+        android:layout_marginBottom="18dp"
+        android:layout_marginTop="26dp"
+        app:layout_constraintBottom_toTopOf="@+id/textView20"
+        app:layout_constraintEnd_toStartOf="@+id/fb"
+        app:layout_constraintStart_toStartOf="@+id/fb"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/lanistalogo" />
 
     <TextView
@@ -28,28 +28,29 @@
         android:textSize="30sp"
         android:textStyle="bold"
         android:typeface="normal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toTopOf="@+id/imageView5"
+        app:layout_constraintEnd_toStartOf="@+id/fb"
+        app:layout_constraintStart_toStartOf="@+id/fb"
+        app:layout_constraintTop_toTopOf="@+id/imageView5" />
 
     <TextView
         android:id="@+id/textView20"
         android:layout_width="wrap_content"
-        android:layout_height="17dp"
-        android:layout_marginBottom="160dp"
-        android:layout_marginStart="21dp"
-        android:layout_marginTop="160dp"
+        android:layout_height="18dp"
+        android:layout_marginBottom="164dp"
+        android:layout_marginEnd="11dp"
+        android:layout_marginTop="163dp"
         android:text="Welcome to Lanista, nice of you to drop by, let's get started!"
         android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="@+id/editText8"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/editText9"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/editText8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="174dp"
+        android:layout_marginBottom="170dp"
         android:layout_marginEnd="7dp"
         android:ems="10"
         android:inputType="textEmailAddress"
@@ -61,20 +62,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="7dp"
-        android:layout_marginTop="8dp"
         android:ems="10"
         android:inputType="textPassword"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText8" />
+        app:layout_constraintBottom_toTopOf="@+id/editText10"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
         android:id="@+id/textView21"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="21dp"
+        android:layout_marginBottom="11dp"
         android:text="email"
-        app:layout_constraintStart_toStartOf="@+id/textView22"
-        app:layout_constraintTop_toBottomOf="@+id/textView15" />
+        app:layout_constraintBottom_toBottomOf="@+id/editText8"
+        app:layout_constraintStart_toStartOf="@+id/textView22" />
 
     <EditText
         android:id="@+id/editText10"
@@ -83,7 +83,7 @@
         android:layout_marginBottom="61dp"
         android:layout_marginEnd="7dp"
         android:layout_marginStart="11dp"
-        android:layout_marginTop="62dp"
+        android:layout_marginTop="61dp"
         android:ems="10"
         android:inputType="textMultiLine"
         android:text="Password has to be at least 8 characters long, include an alphanumeric number and a capital letter"
@@ -97,9 +97,10 @@
         android:id="@+id/textView22"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="12dp"
+        android:layout_marginEnd="1dp"
         android:text="password"
-        app:layout_constraintBaseline_toBaselineOf="@+id/editText9"
+        app:layout_constraintBottom_toBottomOf="@+id/editText9"
         app:layout_constraintEnd_toStartOf="@+id/editText9" />
 
     <Button
@@ -112,116 +113,116 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+
     <com.facebook.login.widget.LoginButton
-        android:id="@+id/loginButton"
-        android:layout_width="wrap_content"
-        android:layout_height="22dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="44dp"
-        android:layout_marginTop="42dp"
+        android:id="@+id/login_button"
+        android:layout_width="0dp"
+        android:layout_height="26dp"
+        android:layout_marginBottom="53dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginStart="23dp"
+        android:layout_marginTop="53dp"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/textView15"
-        app:layout_constraintEnd_toStartOf="@+id/sign_in_button"
+        app:layout_constraintEnd_toStartOf="@+id/btn_sign_in"
+        app:layout_constraintStart_toStartOf="@+id/textView6"
+        app:layout_constraintTop_toTopOf="@+id/textView20" />
+
+    <Button
+        android:id="@+id/fb"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="#416BC1"
+        android:onClick="onClick"
+        android:text="FaceBook Login"
+        android:textColor="#ffffff"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/textView19"
+        app:layout_constraintEnd_toStartOf="@+id/google"
+        app:layout_constraintStart_toStartOf="@+id/google"
+        app:layout_constraintTop_toBottomOf="@+id/textView19" />
+
+
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/btn_sign_in"
+        android:layout_width="101dp"
+        android:layout_height="34dp"
+        android:layout_marginEnd="56dp"
+        android:layout_marginStart="56dp"
+        android:layout_marginTop="35dp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="@+id/textView20"
+        app:layout_constraintStart_toStartOf="@+id/editText8"
         app:layout_constraintTop_toBottomOf="@+id/textView20" />
+
+    <Button
+        android:id="@+id/google"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="180dp"
+        android:layout_marginStart="180dp"
+        android:background="#cf4333"
+        android:onClick="onClick"
+        android:text="Google Login"
+        android:textColor="#ffffff"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/textView19"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView19" />
 
     <ImageView
         android:id="@+id/imageView6"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="7dp"
-        app:layout_constraintBottom_toBottomOf="@+id/sign_in_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/sign_in_button"
-        app:layout_constraintTop_toTopOf="@+id/sign_in_button"
+        android:layout_height="1dp"
+        android:layout_marginBottom="44dp"
+        android:layout_marginTop="42dp"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_sign_in"
+        app:layout_constraintEnd_toEndOf="@+id/editText8"
+        app:layout_constraintStart_toStartOf="@+id/textView19"
+        app:layout_constraintTop_toTopOf="@+id/textView20"
         app:srcCompat="@drawable/amazonlogo" />
-
-    <TextView
-        android:id="@+id/status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/signed_out"
-        android:textColor="@android:color/white"
-        android:textSize="14sp" />
-
-    <com.google.android.gms.common.SignInButton
-        android:id="@+id/sign_in_button"
-        android:layout_width="0dp"
-        android:layout_height="55dp"
-        android:layout_marginEnd="9dp"
-        app:layout_constraintBottom_toTopOf="@+id/loginButton"
-        app:layout_constraintEnd_toStartOf="@+id/imageView6"
-        app:layout_constraintStart_toEndOf="@+id/textView6"
-        app:layout_constraintTop_toTopOf="@+id/loginButton"
-        android:visibility="visible"
-        tools:visibility="gone"/>
-
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@color/blue_grey_900">
-
-        <LinearLayout
-            android:id="@+id/sign_out_and_disconnect"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:orientation="horizontal"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:visibility="gone"
-            tools:visibility="visible">
-
-            <Button
-                android:id="@+id/sign_out_button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/sign_out"
-                android:theme="@style/ThemeOverlay.MyDarkButton" />
-
-            <Button
-                android:id="@+id/disconnect_button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/disconnect"
-                android:theme="@style/ThemeOverlay.MyDarkButton" />
-        </LinearLayout>
-
-    </RelativeLayout>
-
-
-
-
-
-
 
     <TextView
         android:id="@+id/textView6"
         android:layout_width="0dp"
-        android:layout_height="21dp"
-        android:layout_marginBottom="9dp"
-        android:layout_marginEnd="93dp"
+        android:layout_height="22dp"
+        android:layout_marginEnd="15dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp"
         android:text="Sign in with:"
-        app:layout_constraintBottom_toTopOf="@+id/loginButton"
-        app:layout_constraintEnd_toStartOf="@+id/sign_in_button"
+        app:layout_constraintBottom_toTopOf="@+id/imageView6"
+        app:layout_constraintEnd_toStartOf="@+id/editText8"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView20" />
+        app:layout_constraintTop_toTopOf="@+id/imageView6" />
 
     <TextView
         android:id="@+id/textView15"
         android:layout_width="0dp"
         android:layout_height="22dp"
-        android:layout_marginBottom="88dp"
-        android:layout_marginEnd="23dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="90dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginTop="17dp"
         android:text="or try the scenic route:"
-        app:layout_constraintBottom_toBottomOf="@+id/textView22"
-        app:layout_constraintEnd_toEndOf="@+id/loginButton"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView20" />
+        app:layout_constraintBottom_toTopOf="@+id/textView21"
+        app:layout_constraintEnd_toStartOf="@+id/status"
+        app:layout_constraintStart_toStartOf="@+id/textView6"
+        app:layout_constraintTop_toTopOf="@+id/status" />
+
+    <TextView
+        android:id="@+id/status"
+        android:layout_width="90dp"
+        android:layout_height="20dp"
+        android:layout_marginBottom="19dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="6dp"
+        android:text="@string/signed_out"
+        android:textAlignment="center"
+        android:textColor="@android:color/black"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@+id/editText8"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_sign_in" />
 
 </android.support.constraint.ConstraintLayout>
