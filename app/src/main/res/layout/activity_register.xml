@@ -6,7 +6,12 @@
     android:layout_height="match_parent"
     tools:context=".register">
 
-
+    <ProgressBar
+        android:id="@+id/log_in_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        style="@android:style/Widget.ProgressBar.Inverse"/>
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
@@ -16,7 +21,6 @@
         android:text="Welcome to Lanista, nice of you to drop by, let's get started!"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
     <TextView
         android:id="@+id/textView7"
         android:layout_width="wrap_content"
@@ -26,7 +30,6 @@
         android:text="Sign in with"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
     <TextView
         android:id="@+id/textView8"
         android:layout_width="wrap_content"
@@ -48,4 +51,12 @@
         android:src="@drawable/btnlwa_gold_a"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/profile_info"
+        android:layout_width="310dp"
+        android:layout_height="wrap_content"
+        android:text="@string/default_message"
+        android:textSize="15sp"
+        android:gravity="center"
+        android:layout_gravity="center"/>
 </android.support.constraint.ConstraintLayout>

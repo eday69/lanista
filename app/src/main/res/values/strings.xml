@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">lanista</string>
+    <string name="default_message">Thanks for using login with Amazon. If this is your first time, you will be asked to give us permission to access your profile data</string>
 </resources>
