@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="200dp"
+    android:background="@color/colorWhite"
+    android:visibility="visible"
+        >
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="88dp"
+        android:layout_height="44dp"
+        android:layout_marginTop="24dp"
+        android:text="email"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toStartOf="@+id/guideline9"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/email"
+        android:layout_width="194dp"
+        android:layout_height="44dp"
+        android:layout_marginTop="24dp"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toStartOf="@+id/guideline10"
+        app:layout_constraintStart_toStartOf="@+id/guideline4"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:layout_width="87dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="16dp"
+        android:text="password"
+        android:textAlignment="center"
+        android:visibility="visible"
+        app:layout_constraintEnd_toStartOf="@+id/guideline9"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toBottomOf="@+id/textView6" />
+
+    <EditText
+        android:id="@+id/password"
+        android:layout_width="193dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:inputType="textPassword"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toStartOf="@+id/guideline10"
+        app:layout_constraintStart_toStartOf="@+id/guideline4"
+        app:layout_constraintTop_toBottomOf="@+id/email" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="7dp" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="110dp" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="92dp" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="16dp" />
+
+    <TextView
+        android:id="@+id/textView16"
+        android:layout_width="195dp"
+        android:layout_height="38dp"
+        android:text="Password has to be at least 8 characters long, include an alphanumeric number and a capital letter"
+        android:textSize="10sp"
+        app:layout_constraintEnd_toStartOf="@+id/guideline10"
+        app:layout_constraintStart_toStartOf="@+id/guideline4"
+        app:layout_constraintTop_toBottomOf="@+id/password" />
+
+    <TextView
+        android:id="@+id/textView17"
+        android:layout_width="67dp"
+        android:layout_height="19dp"
+        android:layout_marginTop="8dp"
+        android:text="Register"
+        android:textAlignment="center"
+        android:textColor="@color/colorWhite"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/guideline4"
+        app:layout_constraintTop_toBottomOf="@+id/textView16" />
+
+    <TextView
+        android:id="@+id/textView18"
+        android:layout_width="56dp"
+        android:layout_height="18dp"
+        android:layout_marginTop="8dp"
+        android:text="Cancel"
+        android:onClick="closeemail"
+        android:textAlignment="center"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toStartOf="@+id/guideline10"
+        app:layout_constraintTop_toBottomOf="@+id/textView16" />
+
+
+</android.support.constraint.ConstraintLayout>
+

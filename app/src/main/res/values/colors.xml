@@ -3,10 +3,21 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="mainBckGround">#C0D890</color>
     <color name="blue_grey_500">#607D8B</color>
     <color name="blue_grey_600">#546E7A</color>
     <color name="blue_grey_700">#455A64</color>
     <color name="blue_grey_800">#37474F</color>
     <color name="blue_grey_900">#263238</color>
+    <!-- Toolbar  -->
+    <color name="primary" type="color">#009688</color>
+    <!-- Register link colors -->
+    <color name="focused_text_color" type="color">#FF0000</color>
+    <color name="pressed_text_color" type="color">#FFA500</color>
+    <color name="disabled_text_color" type="color">#D3D3D3</color>
+    <color name="default_text_color" type="color">#FFFFFF</color>
+    <color name="active_text_color" type="color">#0000FF</color>
+
 </resources>
+

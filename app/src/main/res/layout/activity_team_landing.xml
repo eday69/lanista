@@ -1,5 +1,6 @@
 <com.example.eday.lanista.view.viewgroup.FlyOutContainer xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -9,7 +10,6 @@
         android:layout_height="wrap_content" />
 
     <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -94,35 +94,14 @@
             android:id="@+id/textView"
             android:layout_width="313dp"
             android:layout_height="49dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="32dp"
             android:text="Mucho texto y poco que decir, es un rollo de cosas que no tienen sentido pero dicen nada."
-            app:layout_constraintBottom_toTopOf="@+id/scrollView2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.51"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/relativeLayout" />
+            app:layout_constraintTop_toBottomOf="@+id/nameTextView" />
 
 
-        <RelativeLayout
-            android:id="@+id/relativeLayout"
-            android:layout_width="317dp"
-            android:layout_height="174dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/nameTextView">
-
-            <CalendarView
-                android:layout_width="314dp"
-                android:layout_height="172dp"
-                android:background="@drawable/bg_calendar"
-                android:dateTextAppearance="@style/SmallerCalendarText"
-                android:visibility="visible"
-                android:weekSeparatorLineColor="#0f0" />
-
-        </RelativeLayout>
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
@@ -140,38 +119,29 @@
                 android:layout_alignParentBottom="true" />
         </RelativeLayout>
 
-        <Button
-            android:id="@+id/newTeam"
-            android:onClick="doNewTeam"
-            android:layout_width="93dp"
-            android:layout_height="21dp"
-            android:layout_marginBottom="50dp"
-            android:paddingBottom="0dp"
-            android:paddingLeft="0dp"
-            android:paddingRight="0dp"
-            android:paddingTop="0dp"
-            android:text="Add team +"
-            android:textSize="10sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <ScrollView
-            android:id="@+id/scrollView2"
-            android:layout_width="344dp"
-            android:layout_height="175dp"
-            app:layout_constraintBottom_toTopOf="@+id/newTeam"
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="365dp"
+            android:layout_height="350dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="@+id/relativeLayout2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView">
 
-            <TableLayout
-                android:id="@+id/tableCoachTeams"
+            <android.support.design.widget.TabLayout
+                android:id="@+id/tabs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:tabMode="fixed" />
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/container"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/bg_coachteamlist"
-                android:padding="0dp"></TableLayout>
-        </ScrollView>
+                android:background="@android:color/white" />
 
+        </LinearLayout>
 
     </android.support.constraint.ConstraintLayout>
 

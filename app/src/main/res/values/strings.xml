@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">lanista</string>
+    <string name="app_name">Lanista</string>
 
     <string name="you_have_landed" />
     <string name="facebook_app_id">659337571094510</string>
@@ -20,5 +20,25 @@
     <string name="sign_out">Sign Out</string>
     <string name="disconnect">Disconnect</string>
     <string name="refresh_token">Get Fresh Token</string>
+
+    <!-- Menu labels -->
+    <string name="action_settings">Settings</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+    <!-- Category name for useful info [CHAR LIMIT=20] -->
+    <string name="category_usefulinfo">General</string>
+
+    <!-- Category name for places [CHAR LIMIT=20] -->
+    <string name="category_places">Places</string>
+
+    <!-- Category name for food [CHAR LIMIT=20] -->
+    <string name="category_food">Food</string>
+
+    <!-- Category name for nature [CHAR LIMIT=20] -->
+    <string name="category_nature">Nature</string>
+
 
 </resources>

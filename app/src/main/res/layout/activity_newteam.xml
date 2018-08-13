@@ -1,5 +1,6 @@
 <com.example.eday.lanista.view.viewgroup.FlyOutContainer xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -9,7 +10,6 @@
         android:layout_height="wrap_content" />
 
     <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -22,10 +22,13 @@
             android:id="@+id/lanistalogo"
             android:layout_width="80dp"
             android:layout_height="80dp"
+            android:layout_marginBottom="40dp"
+            android:layout_marginTop="8dp"
             android:contentDescription="Logo of Lanista"
             android:cropToPadding="false"
             android:src="@drawable/lanistalogo"
             android:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@+id/textView2"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -97,36 +100,15 @@
             android:layout_marginBottom="8dp"
             android:layout_marginTop="8dp"
             android:text="Mucho texto y poco que decir, es un rollo de cosas que no tienen sentido pero dicen nada."
-            app:layout_constraintBottom_toTopOf="@+id/scrollView2"
+            app:layout_constraintBottom_toTopOf="@+id/relativeLayout1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.51"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/relativeLayout" />
+            app:layout_constraintTop_toBottomOf="@+id/lanistalogo" />
 
-
-        <RelativeLayout
-            android:id="@+id/relativeLayout"
-            android:layout_width="317dp"
-            android:layout_height="174dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/nameTextView">
-
-            <CalendarView
-                android:layout_width="314dp"
-                android:layout_height="172dp"
-                android:background="@drawable/bg_calendar"
-                android:dateTextAppearance="@style/SmallerCalendarText"
-                android:visibility="visible"
-                android:weekSeparatorLineColor="#0f0" />
-
-        </RelativeLayout>
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/relativeLayout2"
+            android:id="@+id/relativeLayout1"
             android:layout_width="match_parent"
             android:layout_height="57dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -140,40 +122,56 @@
                 android:layout_alignParentBottom="true" />
         </RelativeLayout>
 
-        <Button
-            android:id="@+id/newTeam"
-            android:onClick="doNewTeam"
-            android:layout_width="93dp"
-            android:layout_height="21dp"
-            android:layout_marginBottom="50dp"
-            android:paddingBottom="0dp"
-            android:paddingLeft="0dp"
-            android:paddingRight="0dp"
-            android:paddingTop="0dp"
-            android:text="Add team +"
-            android:textSize="10sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <ScrollView
-            android:id="@+id/scrollView2"
-            android:layout_width="344dp"
-            android:layout_height="175dp"
-            app:layout_constraintBottom_toTopOf="@+id/newTeam"
+        <Spinner
+            android:id="@+id/sports"
+            android:layout_width="193dp"
+            android:layout_height="32dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/editText"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView2"
+            app:layout_constraintTop_toBottomOf="@+id/nameTextView" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="77dp"
+            android:layout_height="34dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="32dp"
+            android:text="Sport"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView">
+            app:layout_constraintTop_toBottomOf="@+id/nameTextView" />
 
-            <TableLayout
-                android:id="@+id/tableCoachTeams"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/bg_coachteamlist"
-                android:padding="0dp"></TableLayout>
-        </ScrollView>
+        <EditText
+            android:id="@+id/editText"
+            android:layout_width="193dp"
+            android:layout_height="60dp"
+            android:layout_marginBottom="28dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:contentDescription="Write team @string/app_name"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toTopOf="@+id/textView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView5" />
 
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="8dp"
+            android:text="Team Name"
+            app:layout_constraintBottom_toTopOf="@+id/textView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
     </android.support.constraint.ConstraintLayout>
-
 
 </com.example.eday.lanista.view.viewgroup.FlyOutContainer>

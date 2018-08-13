@@ -31,6 +31,19 @@ dependencies {
     implementation 'com.facebook.android:facebook-android-sdk:[4,5)'
     implementation 'com.google.android.gms:play-services-auth:15.0.1'
     implementation 'com.github.bumptech.glide:glide:3.7.0'
+
+    implementation 'com.twitter.sdk.android:twitter-core:3.1.0'
+    implementation 'com.twitter.sdk.android:tweet-ui:3.1.0'
+    implementation 'com.twitter.sdk.android:tweet-composer:3.1.0'
+    implementation 'com.twitter.sdk.android:twitter-mopub:3.1.0'
+
+    implementation 'pub.devrel:easypermissions:0.3.0'
+    implementation('com.google.api-client:google-api-client-android:1.23.0') {
+        exclude group: 'org.apache.httpcomponents'
+    }
+    implementation('com.google.apis:google-api-services-slides:v1-rev294-1.23.0') {
+        exclude group: 'org.apache.httpcomponents'
+    }
 }
 
 apply plugin: 'com.google.gms.google-services'
