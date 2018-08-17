@@ -1,4 +1,6 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/tools">
     <string name="app_name">lanista</string>
     <string name="default_message">Thanks for using login with Amazon. If this is your first time, you will be asked to give us permission to access your profile data</string>
+    <string name="com.twitter.sdk.android.CONSUMER_KEY">412JANJnjOfZjNenv3PUDYq6k</string>
+    <string name="com.twitter.sdk.android.CONSUMER_SECRET">gHtFAje5FTaEv2vgpDzetUvzJBUPVvgCQCD7v1hqNG6ubhlEnx</string>
 </resources>

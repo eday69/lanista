@@ -16,7 +16,7 @@ public class LoginPage extends AppCompatActivity {
         setContentView(R.layout.activity_login_page);
     }
 
-    /** Called when the user taps the Send button */
+    /** Called when the user taps the Login button */
     public void doLogin(View view) {
         // Do something in response to button
         Intent intent = new Intent(this, loginPwd.class);
@@ -26,7 +26,7 @@ public class LoginPage extends AppCompatActivity {
         startActivity(intent);
     }
 
-    /** Called when the user taps the Send button */
+    /** Called when the user taps the Register button */
     public void doRegister(View view) {
         // Do something in response to button
         Intent intent = new Intent(this, register.class);
