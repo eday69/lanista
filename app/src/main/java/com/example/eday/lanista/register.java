@@ -1,17 +1,20 @@
 package com.example.eday.lanista;
 
-import android.app.ActionBar;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -30,26 +33,26 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.Task;
+import com.google.gson.JsonObject;
 
-import java.util.Arrays;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-//import static android.provider.ContactsContract.Intents.Insert.EMAIL;
 
 public class register extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener{
-    public static final String GoogleId = "com.example.myfirstapp.GoogleId";
     private static final String TAG = register.class.getSimpleName();
     private static final int RC_SIGN_IN = 9001;
     private SignInButton google_login_button;
     public LoginButton fb_login_button;
     public CallbackManager callbackManager;
     private GoogleSignInClient mGoogleSignInClient;
-    private GoogleApiClient mGoogleApiClient;
     RelativeLayout emaillogin;
 
     public String id, name, email, gender, birthday;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_register);
 
         emaillogin=(RelativeLayout) findViewById(R.id.emailLogin);
@@ -63,9 +66,10 @@ public class register extends AppCompatActivity implements View.OnClickListener,
 
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         if (accessToken != null) {
-            updateUI(true, null);
-        }
 
+            saveLoginToken("facebook_id", accessToken.getToken());
+            gotoLandingPage(true, null);
+        }
 
         fb_login_button = findViewById(R.id.fb_login_button);
         fb_login_button = (LoginButton) findViewById(R.id.fb_login_button);
@@ -75,7 +79,8 @@ public class register extends AppCompatActivity implements View.OnClickListener,
             public void onSuccess(LoginResult loginResult) {
                 String accessToken = loginResult.getAccessToken().getToken();
                 Log.i(TAG, accessToken);
-                updateUI(true, null);
+                saveLoginToken("facebook_id", accessToken);
+                gotoLandingPage(true, null);
             }
             @Override
             public void onCancel() {
@@ -118,7 +123,8 @@ public class register extends AppCompatActivity implements View.OnClickListener,
 
         if (account != null) {
             Log.d(TAG, "onStart - loggin in automatically ");
-            updateUI(true, account);
+            saveLoginToken("google_id", account.getIdToken());
+            gotoLandingPage(true, account);
         }
     }
 
@@ -170,26 +176,28 @@ public class register extends AppCompatActivity implements View.OnClickListener,
             Log.e(TAG, "Id: "+personId+" Name: " + personName +", email: " + email + ", Image: " + personPhotoUrl +", Family Name: " + familyName);
 
             // Signed in successfully, show authenticated UI.
-            updateUI(true, account);
+            saveLoginToken("google_id", account.getIdToken());
+            gotoLandingPage(true, account);
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
             Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
-            updateUI(false, null);
+//            updateUI(false, null);
         }
     }
 
     // Erase????
+    /*
     private void signOut() {
         Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
                 new ResultCallback<Status>() {
                     @Override
                     public void onResult(Status status) {
-                        updateUI(false, null);
+                        gotoLandingPage(false, null);
                     }
                 });
-    }
-
+  `  }
+*/
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
@@ -200,9 +208,10 @@ public class register extends AppCompatActivity implements View.OnClickListener,
 
 
 
-    private void updateUI(boolean isSignedIn, GoogleSignInAccount googleAcct) {
+    private void gotoLandingPage(boolean isSignedIn, GoogleSignInAccount googleAcct) {
         if (isSignedIn) {
 //            btnSignIn.setVisibility(View.VISIBLE); // was GONE
+            Log.d(TAG, "We will save googleTokenID->" + googleAcct.getIdToken());
 
             // We have Google credentials, Go to Landing Page !
             Intent intent = new Intent(this, landingPage.class);
@@ -230,6 +239,49 @@ public class register extends AppCompatActivity implements View.OnClickListener,
         TextView btn_email = findViewById(R.id.textView15);
         btn_email.setVisibility(View.VISIBLE);
         emaillogin.setVisibility(View.INVISIBLE);
+    }
+
+    private void saveLoginToken(String token_Type, String tokenID){
+
+        JSONObject json = new JSONObject();
+        try {
+            json.put(token_Type, tokenID);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        RequestQueue requestQueue= Volley.newRequestQueue(this);
+
+        Log.e("Sending Json", tokenID.toString());
+        String myURL="http://18.218.188.251:3000/api/token";
+        JsonObjectRequest objectRequest=new JsonObjectRequest(
+                /**
+                 * Creates a new request.
+                 * @param method the HTTP method to use
+                 * @param url URL to fetch the JSON from
+                 * @param jsonRequest A {@link JSONObject} to post with the request. Null is allowed and
+                 *   indicates no parameters will be posted along with request.
+                 * @param listener Listener to receive the JSON response
+                 * @param errorListener Error listener, or null to ignore errors.
+                 **/
+                Request.Method.POST,
+                myURL,
+                json,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.e("Rest Response", response.toString());
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("Rest Response", error.toString());
+                    }
+                }
+        );
+
+        requestQueue.add(objectRequest);
     }
 
 
