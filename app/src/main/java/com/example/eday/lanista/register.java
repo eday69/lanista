@@ -109,7 +109,8 @@ public class register extends AppCompatActivity {
                     //getting the profile image url
                     String profileImage = user.profileImageUrl.replace("_normal", "");
 
-                    textViewEmail.setText("Welcome " + user.name);
+                    textViewEmail.setText("Welcome " + user.name + " " + user.id);
+
                 }
             }
 
