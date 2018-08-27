@@ -17,4 +17,30 @@
     <style name="SmallerCalendarText" parent="@android:style/TextAppearance.Small">
         <item name="android:textSize">10dp</item>
     </style>
+
+    <style name="MyDatePickerStyle" parent="@android:style/Widget.Material.DatePicker">
+        <item name="android:colorControlActivated">#ffea00</item>
+        <item name="android:datePickerMode">spinner</item>
+        <item name="android:calendarViewShown">false</item>
+    </style>
+
+    <style name="MyDatePickerSpinnerStyle" parent="@android:style/Widget.Material.DatePicker">
+        <item name="android:datePickerMode">spinner</item>
+        <item name="android:calendarViewShown">false</item>
+        <item name="colorControlNormal">#d50000</item>
+    </style>
+
+    <style name="Spinner" parent="android:Theme">
+        <item name="android:paddingStart">0dp</item>
+        <item name="android:paddingEnd">0dp</item>
+        <item name="android:textColor">@color/blue_grey_800</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
 </resources>
+
+<!--
+<item name="android:colorControlActivated">#ffea00</item>
+<item name="colorControlHighlight">#c51162</item>
+<item name="android:headerBackground">#00c853</item>
+-->

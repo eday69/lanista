@@ -153,7 +153,7 @@
         android:layout_marginStart="131dp"
         android:layout_marginTop="32dp"
         android:text="or via Email"
-        android:onClick="doRegisterbyEmail"
+        android:onClick="showRegisterbyEmail"
         android:textColor="@color/text_color"
         android:textSize="18sp"
         android:textStyle="bold"

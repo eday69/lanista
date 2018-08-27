@@ -92,18 +92,6 @@
         app:layout_constraintTop_toBottomOf="@+id/password" />
 
     <TextView
-        android:id="@+id/textView17"
-        android:layout_width="67dp"
-        android:layout_height="19dp"
-        android:layout_marginTop="8dp"
-        android:text="Register"
-        android:textAlignment="center"
-        android:textColor="@color/colorWhite"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/guideline4"
-        app:layout_constraintTop_toBottomOf="@+id/textView16" />
-
-    <TextView
         android:id="@+id/textView18"
         android:layout_width="56dp"
         android:layout_height="18dp"
@@ -113,6 +101,20 @@
         android:textAlignment="center"
         android:textSize="12sp"
         app:layout_constraintEnd_toStartOf="@+id/guideline10"
+        app:layout_constraintTop_toBottomOf="@+id/textView16" />
+
+    <Button
+        android:id="@+id/register"
+        android:layout_width="96dp"
+        android:layout_height="37dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:onClick="doRegisterbyEmail"
+        android:text="Register"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toStartOf="@+id/textView18"
+        app:layout_constraintStart_toStartOf="@+id/guideline4"
         app:layout_constraintTop_toBottomOf="@+id/textView16" />
 
 

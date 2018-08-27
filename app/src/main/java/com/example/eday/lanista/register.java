@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -21,7 +22,6 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -30,10 +30,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.Task;
-import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -105,6 +102,7 @@ public class register extends AppCompatActivity implements View.OnClickListener,
 
     private void initializeGPlusSettings(){
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
         // Build a GoogleSignInClient with the options specified by gso.
@@ -122,7 +120,7 @@ public class register extends AppCompatActivity implements View.OnClickListener,
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
 
         if (account != null) {
-            Log.d(TAG, "onStart - loggin in automatically ");
+            Log.d(TAG, "onStart - loggin in automatically : "+account.getIdToken());
             saveLoginToken("google_id", account.getIdToken());
             gotoLandingPage(true, account);
         }
@@ -225,7 +223,7 @@ public class register extends AppCompatActivity implements View.OnClickListener,
     }
 
     /** Called when the user want to register by email */
-    public void doRegisterbyEmail(View view) {
+    public void showRegisterbyEmail(View view) {
         // Do something in response to button
         Log.d(TAG, "emaillogin view id->" + emaillogin);
 //        emaillogin.layout(0, 100, 0, 300);
@@ -233,6 +231,80 @@ public class register extends AppCompatActivity implements View.OnClickListener,
         TextView btn_email = findViewById(R.id.textView15);
         btn_email.setVisibility(View.INVISIBLE);
     }
+
+    public void goToSignInPage(TextView email) {
+        Intent intent = new Intent(this, credentials.class);
+        intent.putExtra("email", (CharSequence) email );
+        startActivity(intent);
+    }
+
+    // here we will try to save email/password in db
+    public void doRegisterbyEmail(final View view) {
+        final TextView email=findViewById((R.id.email));
+        TextView password=findViewById((R.id.password));
+//        findViewById(R.id.emailLogin);
+        JSONObject json = new JSONObject();
+        try {
+            json.put("email", email.getText() );
+            json.put("password", password.getText());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        RequestQueue requestQueue= Volley.newRequestQueue(this);
+
+        Log.e("Sending Json", json.toString());
+//        String myURL="http://18.218.188.251:3000/api/profile";
+        String myURL="http://10.0.2.2:3000/api/profile";
+        JsonObjectRequest objectRequest=new JsonObjectRequest(
+                Request.Method.POST,
+                myURL,
+                json,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            String id =  response.getString("id");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        String msg = null;
+                        try {
+                            msg = response.getString("msg");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        if (msg.length() > 0) {
+                            Toast.makeText(view.getContext(), "email already registered, please login", Toast.LENGTH_LONG)
+                                    .show();
+                            goToSignInPage(email);
+                        }
+                        else {
+                            Toast.makeText(view.getContext(), "sent email to confirm registration", Toast.LENGTH_LONG)
+                                    .show();
+
+                        }
+                        // Or waiting for confirmation email to be 'confirmed' !!
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("Rest Response", error.toString());
+                    }
+                }
+        );
+
+        requestQueue.add(objectRequest);
+
+        // Do something in response to button
+//        emaillogin.layout(0, 100, 0, 300);
+        emaillogin.setVisibility(View.VISIBLE);
+        TextView btn_email = findViewById(R.id.textView15);
+        btn_email.setVisibility(View.INVISIBLE);
+    }
+
 
     public void closeemail(View v){
 
@@ -252,8 +324,9 @@ public class register extends AppCompatActivity implements View.OnClickListener,
 
         RequestQueue requestQueue= Volley.newRequestQueue(this);
 
-        Log.e("Sending Json", tokenID.toString());
-        String myURL="http://18.218.188.251:3000/api/token";
+        Log.e("Sending Json", json.toString());
+//        String myURL="http://18.218.188.251:3000/api/token";
+        String myURL="http://10.0.2.2:3000/api/token";
         JsonObjectRequest objectRequest=new JsonObjectRequest(
                 /**
                  * Creates a new request.
@@ -283,6 +356,7 @@ public class register extends AppCompatActivity implements View.OnClickListener,
 
         requestQueue.add(objectRequest);
     }
+
 
 
 }
