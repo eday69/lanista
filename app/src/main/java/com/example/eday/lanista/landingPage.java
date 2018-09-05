@@ -1,6 +1,8 @@
 package com.example.eday.lanista;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -19,6 +21,12 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.util.TypedValue;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.facebook.AccessToken;
@@ -27,6 +35,7 @@ import com.facebook.GraphResponse;
 import com.facebook.ProfileTracker;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -48,6 +57,8 @@ import com.example.eday.lanista.view.viewgroup.FlyOutContainer;
 public class landingPage extends AppCompatActivity  {
 
     FlyOutContainer root;
+    public int user_id;
+    public String mURL="http://10.0.2.2:3000/";
 
     // For debuggin purposes
     private static final String TAG = landingPage.class.getSimpleName();
@@ -66,7 +77,7 @@ public class landingPage extends AppCompatActivity  {
 
     private GoogleSignInAccount googleAcct;
 
-    public Button GLogout;
+    public Button btnLogout;
     public String id, name, email, gender, birthday;
 
     private TableLayout mcoachtable;
@@ -83,10 +94,13 @@ public class landingPage extends AppCompatActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Log.e(TAG, "landingPage, in !! " );
+
+        // This contains the container that flies in from the right (Settings)
         root = (FlyOutContainer) this.getLayoutInflater().inflate(R.layout.activity_landing_page, null);
         setContentView(root);
 
-        // Toolbar
+        // Toolbar (bottom of page)
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -95,6 +109,12 @@ public class landingPage extends AppCompatActivity  {
         content.setOnClickListener(contentOnClickListener);
         //        setContentView(R.layout.activity_landing_page);
 
+        // Lanista ID of current user
+        user_id= getIntent().getIntExtra("USER_ID", 0);
+
+        Log.e(TAG, "landpage, getting id ");
+        Log.e(TAG, "landpage, id: " + user_id);
+
 
         // Shared login
         nameTextView = (TextView) findViewById(R.id.nameTextView);
@@ -102,16 +122,18 @@ public class landingPage extends AppCompatActivity  {
         idTextView = (TextView) findViewById(R.id.idTextView);
         logStatusTextView = (TextView) findViewById(R.id.logStatus);
 
+//        idTextView.setText( user_id );
+        Log.d(TAG, "landpage, id: " + user_id);
+
         mcoachtable = findViewById(R.id.tableCoachTeams);
+        btnLogout = findViewById(R.id.btnLogout);
 
-
-        GLogout = findViewById(R.id.GLogout);
-
-        GLogout.setOnClickListener(new View.OnClickListener() {
+        btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Logout from Facebook
                 if (AccessToken.getCurrentAccessToken() != null) {
-                    logoutFromFacebook(); // Logout from Facebook
+                    LoginManager.getInstance().logOut();
                 }
                 else {
                     // LogOut from Google
@@ -126,7 +148,7 @@ public class landingPage extends AppCompatActivity  {
                     // Go to Register Screen after logout.
                     Toast.makeText(getApplicationContext(), "Logged Out", Toast.LENGTH_SHORT).show();
                 }
-                goRegisterScreen();
+                goLoginScreen();
             }
         });
 
@@ -136,9 +158,10 @@ public class landingPage extends AppCompatActivity  {
     @Override
     protected void onStart() {
 
+        /*
         // Get the Intent that started this activity and extract the string
-        googleAcct= getIntent().getParcelableExtra("googleAcct");
         Log.d(TAG, "In ! googleAcct" + googleAcct);
+        GoogleSignInAccount googleAcct = GoogleSignIn.getLastSignedInAccount(this);
 
         //Fetch values
         if (googleAcct != null) {
@@ -171,9 +194,6 @@ public class landingPage extends AppCompatActivity  {
         else {
 
 
-            /*
-        super.onStart();
-*/
             AccessToken accessToken = AccessToken.getCurrentAccessToken();
             if (accessToken != null) {
                 GraphRequest request = GraphRequest.newMeRequest(
@@ -211,44 +231,56 @@ public class landingPage extends AppCompatActivity  {
             }
 
         }
+*/
         super.onStart();
-
-        addTeams();
+        // Get user info
+        getUserInfo(this, user_id);
+        // Get user Team's info
+        addTeams(user_id);
 
     }
 
-    private void updateUI(Boolean isLogin, Bundle loginData) {
+    private void getUserInfo(final Context ctx, int user_id) {
         Log.v(TAG, "in updateUI");
-        String logMethod = loginData.getString("method");
-        String Id = "";
-        String Name = "";
-        String Email = "";
-        String ProfilePic = "";
+        RequestQueue requestQueue= Volley.newRequestQueue(ctx);
 
-        switch (logMethod) {
-            case "fb":
-                Log.d(TAG, "updateui. logmethod is fb");
-                Id = loginData.getString("id");
-                Name = loginData.getString("name");
-                Log.v(TAG, "aft Name: "+Name);
-                ProfilePic = loginData.getString("profile_pic");
-                break;
-            case "google":
-                Log.d(TAG, "updateui. logmethod is google");
-                Id = loginData.getString("id");
-                Name = loginData.getString("name");
-                Email = loginData.getString("email");
-                break;
-            default:
-                break;
-        }
-        Glide.with(this).load(ProfilePic)
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE);
+        JsonObjectRequest objectRequest=new JsonObjectRequest(
+                Request.Method.GET,
+                mURL+"api/profile/"+String.valueOf( user_id),
+                null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            String user_name = response.getString( "full_name" );
+                            String user_email = response.getString( "email" );
+                            if (user_name.length() > 0) {
+                                logStatusTextView.setText("Logged in ! ");
+                                emailTextView.setText("email: "+user_email);
+                                nameTextView.setText("Welcome "+user_name);
 
-        logStatusTextView.setText("Signed from " + logMethod);
-        idTextView.setText("Id: "+Id);
-        emailTextView.setText("email: "+Email);
-        nameTextView.setText("Welcome "+Name);
+                            }
+                            else {
+                                Toast.makeText(ctx,response.getString( "msg" ) , Toast.LENGTH_LONG)
+                                        .show();
+                            }
+
+                        } catch (JSONException e) {
+                            Log.e("getUserInfo", "Que paso?");
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("Rest Response", error.toString());
+                    }
+                }
+        );
+
+        requestQueue.add(objectRequest);
+
     }
 
     public void signOut(View view) {
@@ -257,15 +289,10 @@ public class landingPage extends AppCompatActivity  {
         Log.v(TAG, "Elvis has left the building ");
     }
 
-    private void goRegisterScreen() {
-        Log.v(TAG, "in goRegisterScreen");
-        Intent intent = new Intent(this, register.class);
+    private void goLoginScreen() {
+        Intent intent = new Intent(this, LoginPage.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
-    }
-
-    public void logoutFromFacebook(){
-        LoginManager.getInstance().logOut();
     }
 
     @Override
@@ -310,7 +337,7 @@ public class landingPage extends AppCompatActivity  {
         this.root.toggleMenu();
     }
 
-    private void addTeams() {
+    private void addTeams(int user_id) {
 
         addTeamInfo(1, "Chivas", 1);
         addTeamInfo(2, "Leones", 2);
@@ -395,11 +422,15 @@ public class landingPage extends AppCompatActivity  {
 
     private void teamClicked() {
         Intent intent = new Intent(this, teamLanding.class);
+        // Need to send team selected & user id
+        intent.putExtra("USER_ID",  id );
         startActivity(intent);
     }
 
     public void doNewTeam(View v){
         Intent intent = new Intent(this, newTeam.class);
+        // Need to send user id
+        intent.putExtra("USER_ID",  id );
         startActivity(intent);
     }
 

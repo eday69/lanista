@@ -6,7 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,8 +37,11 @@ import com.google.android.gms.tasks.Task;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.concurrent.Future;
+
 
 public class register extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener{
+    public static String profile_id = "com.example.eday.lanista.profile_id";
     private static final String TAG = register.class.getSimpleName();
     private static final int RC_SIGN_IN = 9001;
     private SignInButton google_login_button;
@@ -44,6 +49,9 @@ public class register extends AppCompatActivity implements View.OnClickListener,
     public CallbackManager callbackManager;
     private GoogleSignInClient mGoogleSignInClient;
     RelativeLayout emaillogin;
+
+    userProfile user_id = new userProfile();
+
 
     public String id, name, email, gender, birthday;
     @Override
@@ -61,23 +69,23 @@ public class register extends AppCompatActivity implements View.OnClickListener,
         TextView textView = (TextView) google_login_button.getChildAt(0);
         textView.setText("your_text_xyz");
 
-        AccessToken accessToken = AccessToken.getCurrentAccessToken();
-        if (accessToken != null) {
-
-            saveLoginToken("facebook_id", accessToken.getToken());
-            gotoLandingPage(true, null);
-        }
-
         fb_login_button = findViewById(R.id.fb_login_button);
         fb_login_button = (LoginButton) findViewById(R.id.fb_login_button);
 
+        // When user pressed log in by email, this is the callback and the
+        // login process.
         fb_login_button.registerCallback(callbackManager, new FacebookCallback < LoginResult > () {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 String accessToken = loginResult.getAccessToken().getToken();
                 Log.i(TAG, accessToken);
-                saveLoginToken("facebook_id", accessToken);
-                gotoLandingPage(true, null);
+                // generate Lanista id
+                user_id.social_media = "facebook_id";
+                user_id.social_media_token = accessToken;
+
+                // Generate lanista id from db & got to landing page
+                user_id.doLogin( register.this, user_id.getSocialMediaCredentials());
+
             }
             @Override
             public void onCancel() {
@@ -111,20 +119,6 @@ public class register extends AppCompatActivity implements View.OnClickListener,
         google_login_button.setScopes(gso.getScopeArray());
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        // Check for existing Google Sign In account, if the user is already signed in
-        // the GoogleSignInAccount will be non-null.
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-
-        if (account != null) {
-            Log.d(TAG, "onStart - loggin in automatically : "+account.getIdToken());
-            saveLoginToken("google_id", account.getIdToken());
-            gotoLandingPage(true, account);
-        }
-    }
 
     @Override
     public void onClick(View v) {
@@ -166,16 +160,23 @@ public class register extends AppCompatActivity implements View.OnClickListener,
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             //Fetch values
-            String personId = account.getId();
+//            String personId = account.getId();
             String personName = account.getDisplayName();
-            String personPhotoUrl = account.getPhotoUrl().toString();
+//            String personPhotoUrl = account.getPhotoUrl().toString();
             String email = account.getEmail();
             String familyName = account.getFamilyName();
-            Log.e(TAG, "Id: "+personId+" Name: " + personName +", email: " + email + ", Image: " + personPhotoUrl +", Family Name: " + familyName);
 
-            // Signed in successfully, show authenticated UI.
-            saveLoginToken("google_id", account.getIdToken());
-            gotoLandingPage(true, account);
+            Log.e(TAG, " Name: " + personName +", email: " + email + ", Family Name: " + familyName);
+
+            user_id.social_media = "google_id";
+            user_id.social_media_token = account.getIdToken();
+            user_id.first_name = personName;
+            user_id.last_name = familyName;
+            user_id.email = email;
+
+            // Generate lanista id from db & got to landing page
+            user_id.doLogin( register.this, user_id.getSocialMediaCredentials());
+
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
@@ -184,18 +185,8 @@ public class register extends AppCompatActivity implements View.OnClickListener,
         }
     }
 
-    // Erase????
-    /*
-    private void signOut() {
-        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
-                new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(Status status) {
-                        gotoLandingPage(false, null);
-                    }
-                });
-  `  }
-*/
+
+
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
@@ -204,23 +195,6 @@ public class register extends AppCompatActivity implements View.OnClickListener,
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
     }
 
-
-
-    private void gotoLandingPage(boolean isSignedIn, GoogleSignInAccount googleAcct) {
-        if (isSignedIn) {
-//            btnSignIn.setVisibility(View.VISIBLE); // was GONE
-            Log.d(TAG, "We will save googleTokenID->" + googleAcct.getIdToken());
-
-            // We have Google credentials, Go to Landing Page !
-            Intent intent = new Intent(this, landingPage.class);
-            intent.putExtra("googleAcct", googleAcct);
-            Log.d(TAG, "googleAcct->" + googleAcct);
-            startActivity(intent);
-
-        } else {
-            google_login_button.setVisibility(View.VISIBLE);
-        }
-    }
 
     /** Called when the user want to register by email */
     public void showRegisterbyEmail(View view) {
@@ -232,20 +206,21 @@ public class register extends AppCompatActivity implements View.OnClickListener,
         btn_email.setVisibility(View.INVISIBLE);
     }
 
-    public void goToSignInPage(TextView email) {
+    public void goToSignInPage(String email) {
         Intent intent = new Intent(this, credentials.class);
-        intent.putExtra("email", (CharSequence) email );
+        intent.putExtra("USER_EMAIL", email );
         startActivity(intent);
     }
 
     // here we will try to save email/password in db
     public void doRegisterbyEmail(final View view) {
-        final TextView email=findViewById((R.id.email));
+        TextView email= findViewById((R.id.email));
+        final String tmp_email=String.valueOf(email.getText());
         TextView password=findViewById((R.id.password));
 //        findViewById(R.id.emailLogin);
         JSONObject json = new JSONObject();
         try {
-            json.put("email", email.getText() );
+            json.put("email", tmp_email );
             json.put("password", password.getText());
         } catch (JSONException e) {
             e.printStackTrace();
@@ -277,7 +252,7 @@ public class register extends AppCompatActivity implements View.OnClickListener,
                         if (msg.length() > 0) {
                             Toast.makeText(view.getContext(), "email already registered, please login", Toast.LENGTH_LONG)
                                     .show();
-                            goToSignInPage(email);
+                            goToSignInPage(tmp_email);
                         }
                         else {
                             Toast.makeText(view.getContext(), "sent email to confirm registration", Toast.LENGTH_LONG)
@@ -312,51 +287,5 @@ public class register extends AppCompatActivity implements View.OnClickListener,
         btn_email.setVisibility(View.VISIBLE);
         emaillogin.setVisibility(View.INVISIBLE);
     }
-
-    private void saveLoginToken(String token_Type, String tokenID){
-
-        JSONObject json = new JSONObject();
-        try {
-            json.put(token_Type, tokenID);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        RequestQueue requestQueue= Volley.newRequestQueue(this);
-
-        Log.e("Sending Json", json.toString());
-//        String myURL="http://18.218.188.251:3000/api/token";
-        String myURL="http://10.0.2.2:3000/api/token";
-        JsonObjectRequest objectRequest=new JsonObjectRequest(
-                /**
-                 * Creates a new request.
-                 * @param method the HTTP method to use
-                 * @param url URL to fetch the JSON from
-                 * @param jsonRequest A {@link JSONObject} to post with the request. Null is allowed and
-                 *   indicates no parameters will be posted along with request.
-                 * @param listener Listener to receive the JSON response
-                 * @param errorListener Error listener, or null to ignore errors.
-                 **/
-                Request.Method.POST,
-                myURL,
-                json,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.e("Rest Response", response.toString());
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e("Rest Response", error.toString());
-                    }
-                }
-        );
-
-        requestQueue.add(objectRequest);
-    }
-
-
 
 }

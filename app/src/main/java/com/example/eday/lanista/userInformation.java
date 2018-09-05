@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,12 +27,21 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 
 
 public class userInformation extends AppCompatActivity {
+    public static String profile_id = "com.example.eday.lanista.profile_id";
+
+    // We can access the profile_id anywhere in this class !
 
     public class StringWithTag {
         public String string;
@@ -52,8 +63,23 @@ public class userInformation extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_information);
 
+        // Get me the profile_id of the user who landed us here.
+        Intent intent = getIntent();
+        profile_id = intent.getStringExtra("profile_id");
+
+        Button saveInfoBtn = findViewById(R.id.saveInfo);
+        // Change button listener
+        saveInfoBtn.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+                //Do stuff here
+                saveInfo();
+            }
+        });
+
+        Spinner roles = findViewById(R.id.roles);
+
         // Populate role spinner
-        getRoles();
+        getRoles(roles);
 
     }
 
@@ -72,16 +98,46 @@ public class userInformation extends AppCompatActivity {
     }
 
     public void saveInfo() {
-        final TextView email=findViewById((R.id.email));
-        TextView password=findViewById((R.id.password));
 
-        // Get role.
+        // Get role
+        Spinner roles = findViewById(R.id.roles);
+        String textRole = roles.getSelectedItem().toString();
+        Toast.makeText( getBaseContext(), textRole, Toast.LENGTH_LONG )
+                .show();
+
+        StringWithTag swt = (StringWithTag) roles.getSelectedItem();
+        Integer keyRole = (Integer) swt.id;
+
+        Toast.makeText( getBaseContext(), "Role : "+keyRole.toString(), Toast.LENGTH_LONG )
+                .show();
+
+
         // Get DOB
+        DatePicker datePicker = (DatePicker) findViewById(R.id.datePicker);
+        int day = datePicker.getDayOfMonth();
+        int month = datePicker.getMonth() + 1;
+        int year = datePicker.getYear();
+
+        String strDate = String.valueOf(year)+"-"+String.valueOf(month)+"-"+String.valueOf(day);
+
+        Toast.makeText( getBaseContext(), strDate, Toast.LENGTH_LONG )
+                .show();
+
         // Get Name & LastName
+        TextView txtFirstName=findViewById((R.id.txtFirstName));
+        TextView txtLastName=findViewById((R.id.txtLastName));
+        Toast.makeText( getBaseContext(), txtFirstName.getText(), Toast.LENGTH_LONG )
+                .show();
+        Toast.makeText( getBaseContext(), txtLastName.getText(), Toast.LENGTH_LONG )
+                .show();
+
         JSONObject json = new JSONObject();
         try {
-            json.put("email", email.getText() );
-            json.put("password", password.getText());
+            json.put("user_profile_id", profile_id );
+            json.put("user_role_id", keyRole );
+            json.put("first_name", txtFirstName.getText());
+            json.put("last_name", txtLastName.getText());
+            json.put("user_dob", strDate);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -90,37 +146,21 @@ public class userInformation extends AppCompatActivity {
 
         Log.e("Sending Json", json.toString());
 //        String myURL="http://18.218.188.251:3000/api/profile";
-        String myURL="http://10.0.2.2:3000/api/login";
+        String myURL="http://10.0.2.2:3000/api/profile/"+profile_id;
+
         JsonObjectRequest objectRequest=new JsonObjectRequest(
-                Request.Method.POST,
+                Request.Method.PUT,
                 myURL,
                 json,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.e("Credentials", "Ready for reply");
+                        Log.e("userinformation", "Ready for reply");
                         try {
-                            Log.e("Credentials", response.toString(4));
-                            String id =  response.getString("id");
-                            if (id != "null") {
-                                Integer user_account_status_id = Integer.valueOf( response.getString( "user_account_status_id" ) );
-                                switch (user_account_status_id) {
-                                    case 20: // Waiting for email confirmation
-                                        // Show message, do nothing.
-                                        Toast.makeText( getBaseContext(), "Need to confirm email sent when registered", Toast.LENGTH_LONG )
-                                                .show();
-                                        break;
-                                    case 30: // Received email confirmation
-                                        // Check information, if incomplete, change status
-                                        // and goto to info page
-                                        break;
-                                    case 50: // Incomplete information
-                                        // go to info page.
-                                        break;
-                                    default:  // valid user?
-                                        goToLandingPage();
-                                        break;
-                                }
+                            Log.e("userinformation", response.toString(4));
+                            String user_account_status_id =  response.getString("user_account_status_id");
+                            if (user_account_status_id != "100") {  // profile is complete
+                                goToLandingPage();
                             }
                             else {
                                 String msg = null;
@@ -154,7 +194,7 @@ public class userInformation extends AppCompatActivity {
     }
 
 
-    private void getRoles() {
+    private void getRoles(final Spinner roles) {
         final TextView email=findViewById((R.id.email));
         TextView password=findViewById((R.id.password));
 
@@ -181,7 +221,6 @@ public class userInformation extends AppCompatActivity {
                                 String role=jsonObject1.getString("role");
                                 spnRoles.add(new StringWithTag(role, Integer.parseInt(id)));
                             }
-                            Spinner roles = findViewById(R.id.roles);
                             ArrayAdapter<StringWithTag> adap = new ArrayAdapter<> (getApplicationContext(), android.R.layout.simple_spinner_item, spnRoles);
 
                             roles.setAdapter(adap);
@@ -206,6 +245,7 @@ public class userInformation extends AppCompatActivity {
 
     private void goToLandingPage() {
         Intent intent = new Intent( this, landingPage.class );
+        intent.putExtra("profile_id",  profile_id );
         startActivity( intent );
     }
 

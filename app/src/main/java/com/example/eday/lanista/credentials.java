@@ -17,22 +17,32 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class credentials extends AppCompatActivity {
+    public static final String profile_id = "com.example.eday.lanista.profile_id";
+
+    userProfile user_id = new userProfile();
 
     public Button signInButton;
     public TextView forgotPwd;
+    public TextView mEmail;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_credentials);
 
+        mEmail=findViewById((R.id.email));
+        // User tried to register again, so he got sent to this page to
+        // log in, but since we already have his email, display it.
+        mEmail.setText(getIntent().getStringExtra("USER_EMAIL"));
+
         signInButton = findViewById(R.id.register);
+        // Change text of button from register to login
         signInButton.setText("Login");
+        // Change button listener
         signInButton.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
                 //Do stuff here
@@ -40,6 +50,7 @@ public class credentials extends AppCompatActivity {
             }
         });
         forgotPwd = findViewById(R.id.textView18);
+        // Change text of link to Reset Pwd
         forgotPwd.setText("Reset Pwd");
 
     }
@@ -58,6 +69,7 @@ public class credentials extends AppCompatActivity {
             return;
 
         }
+
         JSONObject json = new JSONObject();
         try {
             json.put("email", email.getText() );
@@ -68,9 +80,8 @@ public class credentials extends AppCompatActivity {
 
         RequestQueue requestQueue= Volley.newRequestQueue(this);
 
-        Log.e("Sending Json", json.toString());
 //        String myURL="http://18.218.188.251:3000/api/profile";
-        String myURL="http://10.0.2.2:3000/api/login";
+        String myURL="http://10.0.2.2:3000/api/validateLogin";
         JsonObjectRequest objectRequest=new JsonObjectRequest(
                 Request.Method.POST,
                 myURL,
@@ -81,7 +92,7 @@ public class credentials extends AppCompatActivity {
                         Log.e("Credentials", "Ready for reply");
                         try {
                             Log.e("Credentials", response.toString(4));
-                            String id =  response.getString("id");
+                            String id =   response.getString("id");
                             if (id != "null") {
                                 Integer user_account_status_id = Integer.valueOf( response.getString( "user_account_status_id" ) );
                                 switch (user_account_status_id) {
@@ -93,13 +104,13 @@ public class credentials extends AppCompatActivity {
                                     case 30: // Received email confirmation
                                         // Check information, if incomplete, change status
                                         // and goto to info page
-                                        goToInformationPage();
+                                        goToInformationPage(Integer.parseInt( id ));
                                         break;
                                     case 50: // Incomplete information
                                         // go to info page.
                                         break;
                                     default:  // valid user?
-                                        goToLandingPage();
+                                        goToLandingPage(Integer.parseInt( id ));
                                         break;
                                 }
                             }
@@ -134,13 +145,15 @@ public class credentials extends AppCompatActivity {
 
     }
 
-    private void goToLandingPage() {
+    private void goToLandingPage(int id) {
         Intent intent = new Intent( this, landingPage.class );
+        intent.putExtra("USER_ID",  id );
         startActivity( intent );
     }
 
-    private void goToInformationPage() {
+    private void goToInformationPage(int id) {
         Intent intent = new Intent( this, userInformation.class );
+        intent.putExtra("USER_ID",  id );
         startActivity( intent );
     }
 
